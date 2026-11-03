@@ -34,6 +34,11 @@ to the supported app routes, cache headers, Fluid compute and function durations
 Import your repository, select Node 24, and configure the variables above. The file prepares the project for
 hosting; it does not create a project or publish a deployment.
 
+The TypeScript configuration rewrites relative `.ts` imports to `.js` when the
+host compiles the server files. Local Vite can load the TypeScript sources
+directly, so CI also imports the compiled API entry points to catch deployment-only
+module resolution errors.
+
 ### GitHub and production updates
 
 Publishing source grants others permission to read and fork it, not write access

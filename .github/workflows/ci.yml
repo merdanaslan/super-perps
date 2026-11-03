@@ -29,6 +29,11 @@ jobs:
         run: npm ls --all > /dev/null
       - run: npm run check
       - run: npm run licenses:check
+      - name: Check compiled server entry points
+        # Local Vite loads TypeScript directly; deployed Node functions load JavaScript.
+        run: |
+          npx tsc --noEmit false --outDir output/ci-server
+          node --input-type=module -e "await import('./output/ci-server/api/solana.js'); await import('./output/ci-server/api/rpc-session.js')"
       - name: Build public browsing variant
         run: npm run build
       - name: Build optional provider variant (no live credentials)
