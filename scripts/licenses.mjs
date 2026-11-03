@@ -29,7 +29,8 @@ for (const [path, metadata] of Object.entries(lock.packages).sort(([a], [b]) =>
     .sort();
   const texts = [];
   for (const file of licenseFiles) {
-    const text = readFileSync(join(path, file), 'utf8').trim();
+    // Match Git's LF checkout policy so CI and local generation agree.
+    const text = readFileSync(join(path, file), 'utf8').replace(/\r\n/g, '\n').trim();
     const hash = createHash('sha256').update(text).digest('hex');
     const entry = notices.get(hash) ?? { packages: [], text };
     entry.packages.push(`${key} (${file})`);
