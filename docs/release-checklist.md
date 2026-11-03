@@ -4,6 +4,27 @@ Updated 3 November 2026. This is the current release summary; older dated
 verification notes are historical observations. Source preparation and automated
 checks are distinct from publishing a repository or clearing a funded deployment.
 
+## GitHub and hosted preview — 3 November 2026
+
+- Published the reviewed source at [merdanaslan/super-perps](https://github.com/merdanaslan/super-perps).
+  GitHub secret scanning, push protection and private vulnerability reporting are enabled.
+- The Vercel preview uses Node 24 and private server RPC configuration scoped to
+  the release preview branch. The builder fee remains zero. Production deployment
+  is disabled while the dependency findings and hosted acceptance remain open.
+- Fixed two differences exposed by hosted checks: Git's LF normalization of
+  dependency notices and compiled server imports still referring to `.ts` files.
+  CI now imports the emitted API entry points as a deployment regression check.
+- GitHub's quality job passes, including **478 tests**, license verification and
+  both browser builds. The separate dependency audit still fails with **24 high
+  and 4 low affected entries**; it is not suppressed.
+- **19 checks on the actual Vercel preview pass:** direct routes, PWA files,
+  notices, missing-asset handling, HTTP and WebSocket login/origin rejection,
+  unsupported HTTP methods and session clearing. Public markets and the Privy
+  email panel load in a phone-sized browser viewport.
+- These checks did not authenticate a wallet, subscribe through the upstream
+  provider, sign or submit a transaction. Hosted login, balances, subscriptions
+  and phone acceptance remain the next verification step before production.
+
 ## Dependency assessment — 3 November 2026
 
 - Corrected the lockfile's Zod peer resolution without changing package versions
@@ -36,9 +57,9 @@ checks are distinct from publishing a repository or clearing a funded deployment
   architecture guide starts transaction reading with the short execution sequence
   before the larger React provider and builders. Existing safety tests are retained.
 
-The dependency findings below still need a separate release decision. GitHub
-publication and a real Vercel preview remain subsequent steps; this source review
-does not deploy anything or certify that the app cannot be exploited.
+The dependency findings below still need a separate release decision. The later
+publication and hosted checks are recorded above; this source review does not
+certify that the app cannot be exploited.
 
 ## Security release review — 2 November 2026
 
@@ -161,9 +182,9 @@ and never sends transactions. Network probes are optional, unsigned diagnostics.
 - [x] Illustrated README, architecture/configuration guides, documentation index,
       dated screenshot provenance and issue templates.
 
-The local repository has no initial commit, remote, public URL or release tag yet.
-Those are publication steps, not evidence of a deployed app. Keep package.json's
-`private: true`: this is a forkable app, not an npm package.
+The source is committed and published; a release tag and production launch remain
+separate steps. Keep package.json's `private: true`: this is a forkable app, not an
+npm package.
 
 ## Wallet transfers — 1 November 2026
 
