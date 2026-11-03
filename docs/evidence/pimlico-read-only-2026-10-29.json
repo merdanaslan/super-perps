@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-29T11:00:55.515505+00:00",
+  "provider": "Pimlico",
+  "cluster": "mainnet",
+  "scope": "Read-only provider metadata; no transaction built, signed or submitted",
+  "checks": [
+    {
+      "method": "getSupportedTokens",
+      "ok": false,
+      "http_status": 403,
+      "error_message": "Provider rejected the read-only request"
+    },
+    {
+      "method": "getPayerSigner",
+      "ok": false,
+      "http_status": 403,
+      "error_message": "Provider rejected the read-only request"
+    }
+  ],
+  "account_plan": "Not exposed by these RPC methods",
+  "financial_execution_verified": false,
+  "transport_note": "Initial Python Authorization-header requests returned HTTP 403. Retried with the documented query authentication using Node fetch.",
+  "query_auth_checks": [
+    {
+      "method": "getSupportedTokens",
+      "http_status": 200,
+      "ok": true,
+      "usdc_supported": true,
+      "token_count": 2
+    },
+    {
+      "method": "getPayerSigner",
+      "http_status": 200,
+      "ok": true,
+      "fee_payer_returned": true,
+      "payment_address_returned": true
+    }
+  ]
+}

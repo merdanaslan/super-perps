@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-28T12:55:24.219Z",
+  "publicData": true,
+  "orderbookSlot": 462483981,
+  "chainSlot": 462483983,
+  "randomUnfundedAuthority": true,
+  "signed": false,
+  "submitted": false,
+  "marginMarketCount": 104,
+  "walletSol": "0",
+  "unsignedTransactionBytes": {
+    "deposit": 798,
+    "withdraw": 890,
+    "market": 554,
+    "limit": 536,
+    "marketWithNewTpSlAccount": 689,
+    "limitWithNewTpSlAccount": 671,
+    "cancel": 521
+  },
+  "setupSimulation": "Simulation failed. \"AccountNotFound\" No transaction was signed.",
+  "monetization": {
+    "syntheticBuilder": true,
+    "flightUnsignedTransactionBytes": {
+      "deposit": 798,
+      "withdraw": 890,
+      "market": 737,
+      "limit": 719,
+      "marketWithNewTpSlAccount": 873,
+      "limitWithNewTpSlAccount": 854,
+      "cancel": 521
+    },
+    "flightGlobalVerified": true,
+    "flightMaxFeeCapBps": "10",
+    "referralPermissionVerified": true,
+    "referralMatchesOfficialSdk": true,
+    "referralUnsignedBytes": 603,
+    "referralSimulation": "Simulation failed. \"AccountNotFound\" No transaction was signed.",
+    "authenticated": false,
+    "referralActivated": false,
+    "builderRegistered": false,
+    "feesCollected": false
+  }
+}

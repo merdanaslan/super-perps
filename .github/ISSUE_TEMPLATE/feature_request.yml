@@ -1,0 +1,22 @@
+name: Feature proposal
+description: Suggest an improvement to the educational starter.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe who needs it and the current limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Proposed approach
+      description: Include a small first version, alternatives, and any relevant public venue documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Fit with the starter
+      description: Explain how it stays understandable for people forking the app. See docs/product-scope.md for the MVP boundaries.

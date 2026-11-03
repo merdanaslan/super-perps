@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-27T22:55:31.767Z",
+  "publicData": true,
+  "orderbookSlot": 462247254,
+  "chainSlot": 462247259,
+  "randomUnfundedAuthority": true,
+  "signed": false,
+  "submitted": false,
+  "marginMarketCount": 104,
+  "walletSol": "0",
+  "unsignedTransactionBytes": {
+    "deposit": 798,
+    "withdraw": 890,
+    "market": 554,
+    "limit": 536,
+    "marketWithNewTpSlAccount": 689,
+    "limitWithNewTpSlAccount": 671,
+    "cancel": 521
+  },
+  "setupSimulation": "Simulation failed. \"AccountNotFound\" No transaction was signed."
+}

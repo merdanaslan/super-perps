@@ -1,0 +1,108 @@
+/* Shared visual materials only. Component layout and behavior stay in app.css
+   and the React components; changing these tokens never changes a trade flow. */
+.primary-button {
+  background: var(--glass-primary);
+  box-shadow: var(--glass-primary-shadow);
+  filter: brightness(1);
+}
+
+.secondary-button,
+.home-search,
+.search-field,
+.ticket-settings button,
+.field-button,
+.choice-row {
+  background: var(--glass-control);
+  box-shadow: var(--glass-control-shadow);
+}
+
+.info-panel,
+.market-overview,
+.education-card,
+.account-menu,
+.account-panel,
+.search-results-card {
+  background: var(--glass-panel);
+  box-shadow: var(--glass-panel-shadow);
+}
+
+.profile-avatar,
+.wallet-recovery-icon,
+.subtle-tag {
+  background: var(--glass-control);
+  box-shadow: var(--glass-control-shadow);
+}
+
+.segmented,
+.direction-toggle {
+  background: var(--glass-panel);
+  box-shadow: var(--glass-panel-shadow);
+}
+
+.selection-tabs-pill .selection-indicator,
+.choice-row.selected {
+  background: var(--glass-selected);
+  box-shadow: var(--glass-selected-shadow);
+}
+
+.market-discovery .market-category-tabs button::before {
+  background: var(--glass-control);
+  box-shadow: var(--glass-highlight);
+}
+
+.market-discovery .market-category-tabs .selection-indicator {
+  background: var(--glass-selected);
+  box-shadow: var(--glass-highlight);
+}
+
+/* Financial values sit on opaque fields, with just a restrained inner edge. */
+.trade-input,
+.market-price-field,
+.amount-field,
+.funding-amount {
+  box-shadow: var(--glass-panel-shadow);
+}
+
+.long-button,
+.short-button,
+.direction-toggle button[aria-pressed='true'] {
+  background-image: var(--action-sheen);
+  box-shadow: var(--glass-highlight);
+}
+
+.app-sheet {
+  background: var(--sheet);
+  box-shadow:
+    var(--glass-highlight),
+    0 -8px 40px var(--shadow);
+}
+
+/* Blur belongs to overlays, not every control or every moving order-book row. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-sheet {
+    background: var(--glass-sheet);
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    backdrop-filter: blur(24px) saturate(125%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-sheet {
+    background: var(--sheet);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(.secondary-button, .home-search, .field-button, .choice-row):not(:disabled):hover,
+  .ticket-settings button:not(:disabled):hover,
+  .market-discovery .market-category-tabs button:not(:disabled):hover::before {
+    box-shadow: var(--glass-selected-shadow);
+  }
+  .primary-button:not(:disabled):hover {
+    /* Keep the gradient intact. Switching background images snaps on hover. */
+    filter: brightness(0.9);
+    box-shadow: var(--glass-primary-hover-shadow);
+  }
+}

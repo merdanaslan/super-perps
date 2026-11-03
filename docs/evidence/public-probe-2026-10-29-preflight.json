@@ -1,0 +1,191 @@
+{
+  "startedAt": "2026-10-29T11:34:39.599Z",
+  "completedAt": "2026-10-29T11:34:42.619Z",
+  "endpoint": "https://perp-api.phoenix.trade",
+  "sdkVersion": "0.6.2",
+  "evidence": "Public reads and unsigned instruction construction only; no wallet, simulation, signing or submission.",
+  "checks": [
+    {
+      "name": "official SDK exchange metadata",
+      "passed": true,
+      "durationMs": 477,
+      "detail": {
+        "source": {
+          "active": "api",
+          "priority": "api",
+          "fallbackAvailable": false,
+          "lastSyncAt": 1793273680076
+        },
+        "programId": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+        "slot": "462861978",
+        "marketCount": 104,
+        "sol": {
+          "status": "active",
+          "baseLotsDecimals": 2,
+          "tickSize": 100
+        }
+      }
+    },
+    {
+      "name": "public SOL order book and exchange candles",
+      "passed": true,
+      "durationMs": 184,
+      "detail": {
+        "quote": {
+          "symbol": "SOL",
+          "bid": "100.46",
+          "ask": "100.47",
+          "receivedAtMs": 1793273680210
+        },
+        "slot": 462865983,
+        "candles": 48,
+        "lastCandle": {
+          "time": 1793268000000,
+          "open": 100.34,
+          "high": 100.89,
+          "low": 100.11,
+          "close": 100.72000000000001,
+          "markOpen": 100.34,
+          "markHigh": 100.87,
+          "markLow": 100.09,
+          "markClose": 100.68,
+          "volume": 1466.4799999999998,
+          "volumeQuote": 147372.28169999996,
+          "tradeCount": 646
+        }
+      }
+    },
+    {
+      "name": "three public WebSocket book updates",
+      "passed": true,
+      "durationMs": 1983,
+      "detail": [
+        {
+          "market": "SOL",
+          "serverTimeMs": 1793273680000,
+          "slot": "462865984",
+          "receivedAtMs": 1793273680713,
+          "bid": 100.46,
+          "ask": 100.47
+        },
+        {
+          "market": "SOL",
+          "serverTimeMs": 1793273681000,
+          "slot": "462865989",
+          "receivedAtMs": 1793273681271,
+          "bid": 100.46,
+          "ask": 100.47
+        },
+        {
+          "market": "SOL",
+          "serverTimeMs": 1793273682000,
+          "slot": "462865994",
+          "receivedAtMs": 1793273682243,
+          "bid": 100.47,
+          "ask": 100.48
+        }
+      ]
+    },
+    {
+      "name": "unsigned long, short and reduce-only instructions",
+      "passed": true,
+      "durationMs": 223,
+      "detail": {
+        "syntheticAuthority": "US517G5965aydkZ46HS38QLi7UQiSojurfbQfKCELFx",
+        "instructions": [
+          {
+            "side": "long",
+            "reduceOnly": false,
+            "priceLimitUsd": "101.4848",
+            "packet": {
+              "side": 0,
+              "priceInTicks": "10148",
+              "numBaseLots": "100",
+              "numQuoteLots": null,
+              "minBaseLotsToFill": "100",
+              "minQuoteLotsToFill": "1",
+              "selfTradeBehavior": 0,
+              "matchLimit": null,
+              "clientOrderId": "0",
+              "lastValidSlot": null,
+              "orderFlags": 0,
+              "cancelExisting": false
+            },
+            "programAddress": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+            "accounts": 10,
+            "bytes": 65
+          },
+          {
+            "side": "short",
+            "reduceOnly": false,
+            "priceLimitUsd": "99.4653",
+            "packet": {
+              "side": 1,
+              "priceInTicks": "9947",
+              "numBaseLots": "100",
+              "numQuoteLots": null,
+              "minBaseLotsToFill": "100",
+              "minQuoteLotsToFill": "1",
+              "selfTradeBehavior": 0,
+              "matchLimit": null,
+              "clientOrderId": "0",
+              "lastValidSlot": null,
+              "orderFlags": 0,
+              "cancelExisting": false
+            },
+            "programAddress": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+            "accounts": 10,
+            "bytes": 65
+          },
+          {
+            "side": "short",
+            "reduceOnly": true,
+            "priceLimitUsd": "99.4653",
+            "packet": {
+              "side": 1,
+              "priceInTicks": "9947",
+              "numBaseLots": "100",
+              "numQuoteLots": null,
+              "minBaseLotsToFill": "100",
+              "minQuoteLotsToFill": "1",
+              "selfTradeBehavior": 0,
+              "matchLimit": null,
+              "clientOrderId": "0",
+              "lastValidSlot": null,
+              "orderFlags": 128,
+              "cancelExisting": false
+            },
+            "programAddress": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+            "accounts": 10,
+            "bytes": 65
+          }
+        ],
+        "submitted": false
+      }
+    },
+    {
+      "name": "unsigned no-referral registration builder",
+      "passed": true,
+      "durationMs": 148,
+      "detail": {
+        "syntheticAuthority": "US517G5965aydkZ46HS38QLi7UQiSojurfbQfKCELFx",
+        "traderPda": "BVapj9ibLRm7UAUVro55bRX63Ym5ZZtYvGh7rT7dZPm4",
+        "includeRegisterTrader": true,
+        "instructions": [
+          {
+            "programId": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+            "accounts": 7,
+            "bytes": 18
+          },
+          {
+            "programId": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+            "accounts": 8,
+            "bytes": 24
+          }
+        ],
+        "maxPositions": 32,
+        "submitted": false
+      }
+    }
+  ]
+}

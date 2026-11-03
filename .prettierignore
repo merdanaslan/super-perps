@@ -1,0 +1,13 @@
+node_modules/
+dist/
+output/
+package-lock.json
+.env*
+docs/evidence/
+docs/dependency-licenses.json
+public/dependency-notices.txt
+.git/
+.vercel/
+.netlify/
+.wrangler/
+.cache/

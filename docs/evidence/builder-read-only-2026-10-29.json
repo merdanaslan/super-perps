@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-29T11:38:31.560Z",
+  "configuredBuilderActive": true,
+  "registeredFeeBps": "10",
+  "feeMatchesConfiguration": true,
+  "signed": false,
+  "submitted": false,
+  "evidence": "Read-only Flight account validation using the local builder configuration; no fee collection tested."
+}

@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-29T19:29:06.641Z",
+  "mode": "unsigned-simulation",
+  "signed": false,
+  "submitted": false,
+  "placed": {
+    "slot": 462999009,
+    "active": [
+      {
+        "index": 1,
+        "sequence": "1",
+        "greater": true,
+        "less": true
+      }
+    ]
+  },
+  "cancelTP": {
+    "slot": 462999009,
+    "active": [
+      {
+        "index": 1,
+        "sequence": "1",
+        "greater": false,
+        "less": true
+      }
+    ]
+  },
+  "cancelSL": {
+    "slot": 462999011,
+    "active": [
+      {
+        "index": 1,
+        "sequence": "1",
+        "greater": true,
+        "less": false
+      }
+    ]
+  },
+  "actualChainConditionalsAfter": [],
+  "privacyNote": "Account positions, entry/liquidation prices and funding balances omitted from this public report. The unsigned per-leg cancellation results are retained."
+}

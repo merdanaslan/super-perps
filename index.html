@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="super perps — an educational, mobile-only Phoenix Perps starter from the Superteam Germany community. Experimental software. Use at your own risk."
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="super perps" />
+    <title>super perps · Educational Phoenix starter</title>
+    <link rel="icon" type="image/png" href="/brand/super-mark.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/super-apple-touch-icon.png" />
+    <!-- Critical startup styles must precede the lazy app's CSS and JavaScript. -->
+    <style>
+      html {
+        background: #000;
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+      }
+      .app-startup {
+        /* Startup cannot wait for the app tokens/CSS. See docs/design-system.md. */
+        --startup-cycle: 2800ms;
+        --startup-spinner-cycle: 900ms;
+        --startup-easing: cubic-bezier(0.4, 0, 0.2, 1);
+        --startup-art: url('/brand/super-mark.png');
+        position: fixed;
+        inset: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+          max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+        background: #000;
+        color: #f5f5f6;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      }
+      .app-startup-emblem {
+        position: relative;
+        display: block;
+        width: 144px;
+        height: 144px;
+        margin-bottom: 8px;
+      }
+      .app-startup-half {
+        position: absolute;
+        inset: 0;
+        background: var(--startup-art) center / contain no-repeat;
+        /* Keep the light sweep inside the original artwork's alpha channel. */
+        mask: var(--startup-art) center / contain no-repeat;
+      }
+      .app-startup-half-left {
+        clip-path: inset(0 50% 0 0);
+      }
+      .app-startup-half-right {
+        clip-path: inset(0 0 0 50%);
+      }
+      .app-startup-half::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(110deg, transparent 35%, #ffffffb3 50%, transparent 65%);
+        opacity: 0;
+        transform: translateX(-120%);
+      }
+      .app-startup-brand {
+        font-size: 32px;
+        font-weight: 650;
+        line-height: 1.2;
+        letter-spacing: -0.04em;
+      }
+      .app-startup-brand span {
+        font-weight: 400;
+      }
+      .app-startup-spinner {
+        box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        margin-top: 8px;
+        border: 2px solid #2b2e35;
+        border-top-color: #9399a4;
+        border-radius: 50%;
+      }
+      /* Loading loop: separate -> settle -> light sweep -> rest.
+         It never gates app readiness; Home interrupts it immediately. */
+      @media (prefers-reduced-motion: no-preference) {
+        .app-startup-half-left {
+          animation: startup-left var(--startup-cycle) var(--startup-easing) infinite;
+        }
+        .app-startup-half-right {
+          animation: startup-right var(--startup-cycle) var(--startup-easing) infinite;
+        }
+        .app-startup-half::after {
+          animation: startup-light var(--startup-cycle) var(--startup-easing) infinite;
+        }
+        .app-startup-spinner {
+          animation: startup-spin var(--startup-spinner-cycle) linear infinite;
+        }
+      }
+      @keyframes startup-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes startup-left {
+        0%,
+        100% {
+          transform: translateX(-5px);
+          opacity: 0.72;
+        }
+        40%,
+        65% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes startup-right {
+        0%,
+        100% {
+          transform: translateX(5px);
+          opacity: 0.72;
+        }
+        40%,
+        65% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes startup-light {
+        0%,
+        20% {
+          transform: translateX(-120%);
+          opacity: 0;
+        }
+        38% {
+          opacity: 0.5;
+        }
+        60%,
+        100% {
+          transform: translateX(120%);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Keep in sync with StartupScreen: the same view survives React boot. -->
+      <div class="app-startup" role="status" aria-label="Loading super perps">
+        <span class="app-startup-emblem" aria-hidden="true">
+          <span class="app-startup-half app-startup-half-left"></span>
+          <span class="app-startup-half app-startup-half-right"></span>
+        </span>
+        <span class="app-startup-brand" aria-hidden="true">super <span>perps</span></span>
+        <span class="app-startup-spinner" aria-hidden="true"></span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

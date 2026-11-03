@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-11-01T09:12:44.078Z",
+  "configuredBuilderActive": true,
+  "registeredFeeBps": "10",
+  "appOverrideBps": "0",
+  "signed": false,
+  "submitted": false,
+  "evidence": "Read-only account validation of the configured zero-fee route. No registry update or trade execution. Addresses and provider credentials omitted."
+}

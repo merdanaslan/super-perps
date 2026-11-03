@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-10-29T11:34:43.130Z",
+  "publicData": true,
+  "orderbookSlot": 462865986,
+  "chainSlot": 462865987,
+  "randomUnfundedAuthority": true,
+  "signed": false,
+  "submitted": false,
+  "marginMarketCount": 104,
+  "walletSol": "0",
+  "unsignedTransactionBytes": {
+    "deposit": 798,
+    "withdraw": 890,
+    "market": 554,
+    "limit": 536,
+    "marketWithNewTpSlAccount": 689,
+    "limitWithNewTpSlAccount": 671,
+    "cancel": 521,
+    "withdrawToExternalWallet": 981
+  },
+  "setupSimulation": "Simulation failed. \"AccountNotFound\" No transaction was signed.",
+  "monetization": {
+    "syntheticBuilder": true,
+    "flightUnsignedTransactionBytes": {
+      "deposit": 798,
+      "withdraw": 890,
+      "market": 737,
+      "limit": 719,
+      "marketWithNewTpSlAccount": 873,
+      "limitWithNewTpSlAccount": 854,
+      "cancel": 521,
+      "withdrawToExternalWallet": 981
+    },
+    "flightGlobalVerified": true,
+    "flightMaxFeeCapBps": "10",
+    "referralPermissionVerified": true,
+    "referralMatchesOfficialSdk": true,
+    "referralUnsignedBytes": 603,
+    "referralSimulation": "GET https://perp-api.phoenix.trade/v1/exchange/snapshot failed with HTTP 429 Too Many Requests\n{\"error\":\"rate_limited\"}",
+    "authenticated": false,
+    "referralActivated": false,
+    "builderRegistered": false,
+    "feesCollected": false
+  }
+}

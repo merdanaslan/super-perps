@@ -1,0 +1,67 @@
+/* super perps: black/charcoal UI with emerald brand artwork and semantic trade colors. */
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --canvas: #000000;
+  --surface-subtle: #101114;
+  --surface: #17191f;
+  --surface-raised: #202329;
+  --selected: #32363e;
+  --sheet: #101114;
+  --text: #f5f5f6;
+  --white: #ffffff;
+  --muted: #9399a4;
+  --muted-bright: #b5bac3;
+  --line: #202228;
+  --border: #2b2e35;
+  --accent: #ffffff;
+  --accent-text: #f5f5f6;
+  --accent-wash: #ffffff08;
+  --focus: #00c78b;
+  --brand-green: #00c78b;
+  --gold: #f6c85f;
+  --up: #00c78b;
+  --down: #ff3d65;
+  --up-wash: #00c78b12;
+  --down-wash: #ff3d6512;
+  --up-depth: #00c78b0b;
+  --down-depth: #ff3d650b;
+  --up-button: #00bd85;
+  --down-button: #ff3d65;
+  --warning: #f6c85f;
+  --warning-wash: #f6c85f0c;
+  --shadow: #00000060;
+  --backdrop: #000000b0;
+  --page-gutter: 20px;
+
+  /* One material language: quiet controls, highlighted selections, dense sheets.
+     Only floating layers need backdrop blur; fields keep their opaque surfaces. */
+  --glass-primary: linear-gradient(165deg, #ffffff, #f3f4f6 45%, #dce0e6);
+  --glass-control: linear-gradient(155deg, #ffffff0e, #ffffff02 52%, #ffffff06), #17191fb8;
+  --glass-panel: linear-gradient(145deg, #ffffff08, transparent 52%), #101114ed;
+  --glass-selected: linear-gradient(135deg, #ffffff1a, #ffffff08 65%, #ffffff0d);
+  --glass-sheet: linear-gradient(155deg, #ffffff09, transparent 45%), #101114ed;
+  --glass-navigation:
+    linear-gradient(180deg, #ffffff14, #ffffff03 28%, transparent 48%),
+    linear-gradient(130deg, #25283014, #14161b1f);
+  --glass-rim: #ffffff1c;
+  --glass-rim-strong: #ffffff30;
+  --glass-highlight: inset 0 1px 1px #ffffff1c, inset 0 -1px 1px #00000030;
+  --glass-control-shadow: inset 0 0 0 1px var(--glass-rim), var(--glass-highlight);
+  --glass-panel-shadow: inset 0 0 0 1px #ffffff0f, inset 0 1px 0 #ffffff0b;
+  --glass-selected-shadow:
+    inset 0 0 0 1px var(--glass-rim-strong), inset 0 1px 2px #ffffff25, inset 0 -1px 1px #ffffff0b,
+    0 2px 8px #00000024;
+  --glass-primary-shadow: inset 0 1px 1px #ffffff, inset 0 -1px 1px #00000016, 0 3px 14px #00000024;
+  --glass-primary-hover-shadow:
+    inset 0 0 0 1px #ffffff99, inset 0 1px 2px #ffffff, 0 3px 18px #ffffff1a;
+  --action-sheen: linear-gradient(180deg, #ffffff1c, transparent 58%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-control: var(--surface);
+    --glass-panel: var(--surface-subtle);
+    --glass-selected: var(--selected);
+    --glass-sheet: var(--sheet);
+    --glass-navigation: #15171d;
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "mode": "Unsigned mainnet simulation only; no signer, broadcast or funds moved",
+  "action": {
+    "kind": "order",
+    "symbol": "ETH",
+    "side": "long",
+    "orderType": "market",
+    "baseUnits": "0.001",
+    "reduceOnly": false,
+    "takeProfit": "2400",
+    "stopLoss": "2300"
+  },
+  "before": {
+    "at": "2026-10-29T18:44:38.423Z",
+    "simulations": [
+      {
+        "slot": 462986505,
+        "error": {
+          "InstructionError": [
+            3,
+            "InvalidInstructionData"
+          ]
+        },
+        "unitsConsumed": 56796,
+        "logs": [
+          "Program log: Phoenix Eternal: CreateConditionalOrdersAccount",
+          "Program log: Conditional orders account created successfully",
+          "Program log: Phoenix Flight: Proxy",
+          "Program log: Phoenix Eternal: PlaceLimitOrderWithConditionals",
+          "Program log: assert_with_side_effect failed",
+          "Program log: \"Order type must be Limit or PostOnly\"\nprograms/eternal-lib/src/loaders/mod.rs:60:22",
+          "Program EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih failed: invalid instruction data",
+          "Program F1ightu9cujFYo34k9CabifLrJT8qzfDVM2Q7BqhJn2W failed: invalid instruction data"
+        ]
+      }
+    ]
+  },
+  "after": {
+    "at": "2026-10-29T18:48:52.462Z",
+    "simulations": [
+      {
+        "slot": 462987699,
+        "error": null,
+        "unitsConsumed": 315233,
+        "logs": [
+          "Program log: Phoenix Eternal: CreateConditionalOrdersAccount",
+          "Program log: Conditional orders account created successfully",
+          "Program log: Phoenix Flight: Proxy",
+          "Program log: Phoenix Eternal: Place Market Order",
+          "Program log: Phoenix Eternal: Transfer Collateral",
+          "Program log: Phoenix Flight: Proxy",
+          "Program log: Phoenix Eternal: Place Position Conditional Order",
+          "Program log: Phoenix Eternal: PlacePositionConditionalOrder"
+        ]
+      },
+      {
+        "slot": 462987699,
+        "error": null,
+        "unitsConsumed": 315233,
+        "logs": [
+          "Program log: Phoenix Eternal: CreateConditionalOrdersAccount",
+          "Program log: Conditional orders account created successfully",
+          "Program log: Phoenix Flight: Proxy",
+          "Program log: Phoenix Eternal: Place Market Order",
+          "Program log: Phoenix Eternal: Transfer Collateral",
+          "Program log: Phoenix Flight: Proxy",
+          "Program log: Phoenix Eternal: Place Position Conditional Order",
+          "Program log: Phoenix Eternal: PlacePositionConditionalOrder"
+        ]
+      }
+    ]
+  },
+  "preparedNetworkFeeLamports": 5399,
+  "preparedAccountFundingLamports": 19344640,
+  "cause": "ImmediateOrCancel packet sent through PlaceLimitOrderWithConditionals; on-chain program requires Limit or PostOnly.",
+  "fix": "Create conditional account if absent, then PlaceMarketOrder and exact-size PlacePositionConditionalOrder in the same transaction. Flight routing retained.",
+  "privacyNote": "Wallet and collateral balances omitted from this public diagnostic report. The unsigned simulation results and instruction failure are retained."
+}

@@ -1,0 +1,53 @@
+name: Release checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Validate dependency tree
+        run: npm ls --all > /dev/null
+      - run: npm run check
+      - run: npm run licenses:check
+      - name: Build public browsing variant
+        run: npm run build
+      - name: Build optional provider variant (no live credentials)
+        run: npm run build -- --outDir output/ci-provider
+        env:
+          VITE_PRIVY_APP_ID: release-build-placeholder
+          SOLANA_RPC_URL: https://rpc.example.test/?api-key=EXAMPLE_BUILD_GUARD_SENTINEL
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Known upstream findings are documented, not hidden with continue-on-error.
+      - run: npm run audit:release
