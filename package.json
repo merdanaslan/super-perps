@@ -33,7 +33,7 @@
     "@solana-program/memo": "0.16.0",
     "@solana-program/system": "0.16.0",
     "@solana-program/token": "0.18.0",
-    "@solana/kit": "8.5.0",
+    "@solana/kit": "8.6.0",
     "@vercel/analytics": "2.0.1",
     "decimal.js": "10.6.0",
     "jose": "6.2.15",
