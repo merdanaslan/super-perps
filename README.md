@@ -120,6 +120,8 @@ npm run preview
 Production preview runs on port 4173. For an installed phone test, follow the
 [HTTPS/PWA guide](docs/pwa-testing.md). For hosting, see
 [deployment](docs/deployment.md); a Vercel configuration is included.
+Optional [basic Web Analytics](docs/deployment.md#optional-basic-analytics) can
+count hosted visits and page views. It is disabled by default in forks.
 
 A public fork does not change this project's hosted site. When using Vercel's
 Git integration, only changes pushed or merged into your configured production

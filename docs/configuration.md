@@ -12,21 +12,22 @@ Vite reads public configuration at build time; the server reads private settings
 at startup. Restart local servers after changes and rebuild if public values change.
 See [`src/config.ts`](../src/config.ts) and [`server/config.ts`](../server/config.ts).
 
-| Variable                         | Purpose                                                                       |
-| -------------------------------- | ----------------------------------------------------------------------------- |
-| `VITE_PHOENIX_API_URL`           | Phoenix perps API; the template uses its public mainnet default               |
-| `VITE_PRIVY_APP_ID`              | Public Privy App ID; blank disables login and excludes provider bundles       |
-| `VITE_PRIVY_CLIENT_ID`           | Optional public Privy client ID                                               |
-| `SOLANA_RPC_URL`                 | Private server HTTPS mainnet RPC; required for the default relay              |
-| `SOLANA_WS_URL`                  | Optional private WSS endpoint; otherwise derived from the private RPC URL     |
-| `RPC_ALLOWED_ORIGINS`            | Exact comma-separated app origins; add hosted/tunnel origins explicitly       |
-| `PRIVY_APP_ID`                   | Optional server override; otherwise uses `VITE_PRIVY_APP_ID`                  |
-| `VITE_SOLANA_RPC_URL`            | Optional **public** direct-provider alternative; blank uses `/api/solana`     |
-| `VITE_SOLANA_WS_URL`             | Optional **public** WebSocket alternative; blank derives from the browser RPC |
-| `VITE_REPOSITORY_URL`            | Your actual public repository URL, displayed in About                         |
-| `VITE_PHOENIX_BUILDER_AUTHORITY` | Optional registered Flight builder authority                                  |
-| `VITE_PHOENIX_BUILDER_FEE_BPS`   | `0` for no app fee, or the registered integer rate; requires its authority    |
-| `VITE_PHOENIX_REFERRAL_CODE`     | Optional operator referral code for new-account setup                         |
+| Variable                         | Purpose                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| `VITE_PHOENIX_API_URL`           | Phoenix perps API; the template uses its public mainnet default                       |
+| `VITE_PRIVY_APP_ID`              | Public Privy App ID; blank disables login and excludes provider bundles               |
+| `VITE_PRIVY_CLIENT_ID`           | Optional public Privy client ID                                                       |
+| `SOLANA_RPC_URL`                 | Private server HTTPS mainnet RPC; required for the default relay                      |
+| `SOLANA_WS_URL`                  | Optional private WSS endpoint; otherwise derived from the private RPC URL             |
+| `RPC_ALLOWED_ORIGINS`            | Exact comma-separated app origins; add hosted/tunnel origins explicitly               |
+| `PRIVY_APP_ID`                   | Optional server override; otherwise uses `VITE_PRIVY_APP_ID`                          |
+| `VITE_SOLANA_RPC_URL`            | Optional **public** direct-provider alternative; blank uses `/api/solana`             |
+| `VITE_SOLANA_WS_URL`             | Optional **public** WebSocket alternative; blank derives from the browser RPC         |
+| `VITE_REPOSITORY_URL`            | Your actual public repository URL, displayed in About                                 |
+| `VITE_WEB_ANALYTICS_ENABLED`     | Set `true` for basic Vercel page views; blank disables it, and local dev never tracks |
+| `VITE_PHOENIX_BUILDER_AUTHORITY` | Optional registered Flight builder authority                                          |
+| `VITE_PHOENIX_BUILDER_FEE_BPS`   | `0` for no app fee, or the registered integer rate; requires its authority            |
+| `VITE_PHOENIX_REFERRAL_CODE`     | Optional operator referral code for new-account setup                                 |
 
 **Every `VITE_*` value is visible in the browser.** Never include a private key,
 seed phrase, Privy app secret or server-only credential. Use provider origin

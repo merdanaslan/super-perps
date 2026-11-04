@@ -1,6 +1,6 @@
 {
   "description": "Installed production dependency inventory. Metadata is not a legal assessment. Missing texts and custom terms need review; packages retain their own licenses.",
-  "lockfileSha256": "587a7b638a4c05856bb45226b03131381a021391a43fa5e4dcd44b11c6e3d4a9",
+  "lockfileSha256": "3addf26168a336dae39bc647ab035afd04eb3a2e2ca9ee7e1c8b65e74d4054c0",
   "packages": [
     {
       "name": "@adraffy/ens-normalize",
@@ -1780,6 +1780,14 @@
     {
       "name": "@types/trusted-types",
       "version": "2.0.7",
+      "declaredLicense": "MIT",
+      "licenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "@vercel/analytics",
+      "version": "2.0.1",
       "declaredLicense": "MIT",
       "licenseFiles": [
         "LICENSE"

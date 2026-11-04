@@ -40,6 +40,7 @@ jobs:
         run: npm run build -- --outDir output/ci-provider
         env:
           VITE_PRIVY_APP_ID: release-build-placeholder
+          VITE_WEB_ANALYTICS_ENABLED: 'true'
           SOLANA_RPC_URL: https://rpc.example.test/?api-key=EXAMPLE_BUILD_GUARD_SENTINEL
 
   dependency-audit:

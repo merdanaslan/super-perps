@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add optional basic Vercel Web Analytics for hosted visits, with URL redaction
+  and no custom events. Tracking is disabled by default and in local development.
 - Correct Zod peer resolution in the lockfile without changing package versions,
   and check dependency-tree validity in CI. Document which remaining advisory
   paths are included in the browser, server and build tooling.
