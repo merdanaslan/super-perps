@@ -49,7 +49,7 @@ boundary, not an authentication or security boundary.
 | Module                           | Owns                                                                                   | Keep out of it                                           |
 | -------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `app/`                           | Screens, draft inputs, accessible components and formatting                            | Direct signing/submission or invented balances           |
-| `app/market-data.tsx`            | Public market metadata, quotes, order-book stream and candle polling                   | Private account state and approval state                 |
+| `app/market-data.tsx`            | Public market metadata, quotes, order-book and candle streams                          | Private account state and approval state                 |
 | `phoenix/`                       | SDK adapters, canonical market identifiers, exact order validation and funding display | Wallet credentials and app navigation                    |
 | `trading/types.ts`               | Action/account/review contracts and units                                              | Runtime work and provider imports                        |
 | `trading/service.ts`             | Fresh account/risk reads, venue instruction builders and broadcast transport           | User interaction or implicit approvals                   |
@@ -87,8 +87,18 @@ See [relay boundaries and limits](rpc-relay.md) before changing its policy.
 
 `MarketProvider` owns the public SDK client. It releases streams while the page
 is hidden. `useOrderBook` follows the selected symbol; Trade passes the same book
-to its sizing reference and `OrderBook` component. Candles come from Phoenix's
-canonical history endpoint. Display throttling preserves source timestamps.
+to its sizing reference and `OrderBook` component. Display throttling preserves
+source timestamps.
+
+`useCandles` combines Phoenix's canonical REST history with `client.streams.candles`.
+The stream updates the current candle before its timeframe ends; Lightweight Charts
+updates that bar in place. These are exchange OHLC values, not candles fabricated
+from book mid-prices or mark prices. REST reconciles history every 15 seconds and
+remains a fallback during stream failures. Updates merge by candle timestamp and
+cumulative trade count so a delayed snapshot cannot erase newer trades or the open
+bucket. The window stays at 160 bars, subscriptions stop when hidden/collapsed, and
+changing market/timeframe aborts the old feed. The chart frames the initial history
+once, then preserves the user's zoom during updates and backfills.
 
 `TradingProvider` reads the selected wallet's account periodically and on return
 to the page. Wallet changes invalidate earlier reads. Preparing an action reads
@@ -159,6 +169,14 @@ app tabs from executing overlapping actions. The pending receipt is written to
 
 A timeout after broadcast is ambiguous, not proof of failure. The original
 signature remains pending and blocks another financial action until reconciled.
+Ordinary RPC submissions keep preflight enabled and leave `maxRetries` unset so
+the provider can use its normal rebroadcast policy instead of stopping after two
+retries. The app sends the reviewed signed bytes once; it never automatically
+re-signs an action. Explicit preflight, signature-validation and invalid-parameter
+rejections from that first send resolve immediately with their RPC details.
+`AlreadyProcessed`, transport errors, unknown RPC errors and Phoenix co-signing
+responses remain subject to signature reconciliation rather than being treated
+as proof that nothing was submitted.
 Receipt updates merge under the same lock so a late response cannot overwrite
 a newer receipt. Confirmation waits for a sufficiently recent account snapshot
 before updating the draft/automatic dismissal state. Confirmation itself is not

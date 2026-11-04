@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   address,
   generateKeyPair,
@@ -11,15 +11,17 @@ import {
 import {
   checkReceipt,
   compileInstructions,
+  createRpcCall,
   MAINNET_GENESIS,
   prepareTransaction,
+  toBase64,
   verifyWalletSignature,
   type Receipt,
   type RpcCall,
 } from './chain';
 import { reconcileReceipt } from './receipt';
 import { executeReviewed } from './execute';
-import { assertSameInstructions } from './service';
+import { assertSameInstructions, TradingService } from './service';
 import type { ReviewPlan } from './types';
 
 const lifetime = { blockhash: '11111111111111111111111111111111', lastValidBlockHeight: 200 };
@@ -27,6 +29,7 @@ const memo = (text = 'local-test'): Instruction => ({
   programAddress: address('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
   data: new TextEncoder().encode(text),
 });
+afterEach(() => vi.unstubAllGlobals());
 async function fixture() {
   // Ephemeral, unfunded keys exist only inside these unit tests. No RPC submits are used.
   const key = await generateKeyPair();
@@ -52,6 +55,90 @@ async function fixture() {
   return { plan, key, sign };
 }
 describe('reviewed transactions', () => {
+  it.each([
+    {
+      code: -32002,
+      message: 'Transaction simulation failed',
+      data: { err: 'InsufficientFundsForFee' },
+    },
+    { code: -32003, message: 'Transaction signature verification failure' },
+    { code: -32602, message: 'Invalid transaction parameters' },
+  ])(
+    'resolves an explicit send rejection ($code) instead of waiting for blockhash expiry',
+    async (error) => {
+      const { plan, sign } = await fixture();
+      const rpc = createRpcCall('https://rpc.example.test');
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => Response.json({ jsonrpc: '2.0', id: 1, error })),
+      );
+      let saved: Receipt | undefined;
+      const receipt = await executeReviewed(plan, {
+        currentAuthority: () => plan.authority,
+        sign,
+        blockHeight: async () => 100,
+        persist: (value) => {
+          saved = value;
+        },
+        broadcast: async (_plan, signed) => {
+          await rpc('sendTransaction', [toBase64(signed.bytes)]);
+        },
+      });
+      expect(saved?.state).toBe('pending');
+      expect(receipt.signature).toBe(saved?.signature);
+      expect(receipt.state).toBe('failed');
+      expect(receipt.detail).toContain(error.message);
+      if ('data' in error) expect(receipt.detail).toContain('InsufficientFundsForFee');
+    },
+  );
+  it.each([
+    { code: -32005, message: 'Node is unhealthy' },
+    { code: -32603, message: 'Internal error' },
+    { message: 'Unknown provider error' },
+    { code: -32002, message: 'Transaction simulation failed', data: { err: 'AlreadyProcessed' } },
+  ])('keeps uncertain RPC results pending: $message', async (error) => {
+    const { plan, sign } = await fixture();
+    const rpc = createRpcCall('https://rpc.example.test');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ jsonrpc: '2.0', id: 1, error })),
+    );
+    const receipt = await executeReviewed(plan, {
+      currentAuthority: () => plan.authority,
+      sign,
+      blockHeight: async () => 100,
+      persist: vi.fn(),
+      broadcast: async () => {
+        await rpc('sendTransaction', []);
+      },
+    });
+    expect(receipt.state).toBe('pending');
+  });
+  it('allows normal RPC rebroadcasting while preserving exact signed bytes and preflight checks', async () => {
+    const { plan, sign } = await fixture();
+    const signed = await verifyWalletSignature(plan, await sign(plan.bytes));
+    const fetchRpc = vi.fn(async () =>
+      Response.json({ jsonrpc: '2.0', id: 1, result: signed.signature }),
+    );
+    vi.stubGlobal('fetch', fetchRpc);
+    const service = new TradingService('https://phoenix.example.test', 'https://rpc.example.test');
+    try {
+      await service.broadcast(plan, signed);
+      const request = JSON.parse(
+        String((fetchRpc.mock.calls[0] as unknown as [string, RequestInit])[1].body),
+      );
+      expect(request.method).toBe('sendTransaction');
+      expect(request.params[0]).toBe(toBase64(signed.bytes));
+      expect(request.params[1]).toEqual({
+        encoding: 'base64',
+        skipPreflight: false,
+        preflightCommitment: 'confirmed',
+      });
+      expect(fetchRpc).toHaveBeenCalledTimes(1);
+    } finally {
+      service.dispose();
+    }
+  });
   it('reports wallet approval before network checks and preserves save-before-submit ordering', async () => {
     const { plan, sign } = await fixture();
     const steps: string[] = [];

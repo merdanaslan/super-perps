@@ -10,6 +10,9 @@ const mocks = vi.hoisted(() => ({
   removeLine: vi.fn(),
   options: vi.fn(),
   removeChart: vi.fn(),
+  setData: vi.fn(),
+  update: vi.fn(),
+  range: vi.fn(),
 }));
 vi.mock('lightweight-charts', () => ({
   CandlestickSeries: {},
@@ -17,12 +20,13 @@ vi.mock('lightweight-charts', () => ({
   LineStyle: { Dashed: 2, Dotted: 1, LargeDashed: 3 },
   createChart: () => ({
     addSeries: () => ({
-      setData: vi.fn(),
+      setData: mocks.setData,
+      update: mocks.update,
       applyOptions: mocks.options,
       createPriceLine: mocks.line,
       removePriceLine: mocks.removeLine,
     }),
-    timeScale: () => ({ setVisibleLogicalRange: vi.fn() }),
+    timeScale: () => ({ setVisibleLogicalRange: mocks.range }),
     remove: mocks.removeChart,
   }),
 }));
@@ -53,6 +57,41 @@ const position = {
 afterEach(async () => {
   await act(() => root.render(null));
   vi.clearAllMocks();
+});
+it('updates the open candle in place and appends new candles without resetting zoom', async () => {
+  const bar = { time: 1_793_005_200, open: 100, high: 105, low: 98, close: 102, volume: 2 };
+  await act(() => root.render(<CandleCanvas symbol="ETH" bars={[bar]} />));
+  const updated = { ...bar, close: 104 };
+  await act(() => root.render(<CandleCanvas symbol="ETH" bars={[updated]} />));
+  expect(mocks.setData).toHaveBeenCalledTimes(1);
+  expect(mocks.update).toHaveBeenLastCalledWith({
+    time: bar.time,
+    open: 100,
+    high: 105,
+    low: 98,
+    close: 104,
+  });
+  const next = { ...bar, time: bar.time + 60 };
+  await act(() => root.render(<CandleCanvas symbol="ETH" bars={[updated, next]} />));
+  expect(mocks.setData).toHaveBeenCalledTimes(1);
+  expect(mocks.update).toHaveBeenLastCalledWith(expect.objectContaining({ time: next.time }));
+  expect(mocks.range).toHaveBeenCalledTimes(1);
+  // A corrected historical candle requires a full replacement, still preserving zoom.
+  await act(() =>
+    root.render(<CandleCanvas symbol="ETH" bars={[{ ...updated, high: 106 }, next]} />),
+  );
+  expect(mocks.setData).toHaveBeenCalledTimes(2);
+  expect(mocks.range).toHaveBeenCalledTimes(1);
+});
+it('frames the initial history when a live candle arrives before the REST snapshot', async () => {
+  const bar = { time: 1_793_005_200, open: 100, high: 105, low: 98, close: 102, volume: 2 };
+  await act(() => root.render(<CandleCanvas symbol="ETH" bars={[bar]} />));
+  const history = Array.from({ length: 160 }, (_, index) => ({
+    ...bar,
+    time: bar.time - (159 - index) * 60,
+  }));
+  await act(() => root.render(<CandleCanvas symbol="ETH" bars={history} />));
+  expect(mocks.range).toHaveBeenLastCalledWith({ from: 100, to: 163 });
 });
 it('draws a resting order separately from the filled position and includes both in the price range', async () => {
   await act(() =>

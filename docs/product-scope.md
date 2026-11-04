@@ -21,6 +21,12 @@ signing, confirmation and reconciliation; actual positions and essential managem
 Every unavailable or unverified capability must be identified as such.
 
 Market and limit orders, cancellation, and reduce-only closing are in scope.
+USDC order entry converts position value to whole base lots, rounded down at the
+entered limit price or current market quote. The ticket shows the resulting
+quantity, order value and any rounding. For example, with a 0.0001 BTC lot at
+78,400 USD, a 10 USDC input sizes 0.0001 BTC worth 7.84 USDC; the next lot would
+exceed the input. This is position value, not margin or fees. Market execution
+prices can move within the reviewed slippage bound.
 Attached native TP/SL and the percentage-capacity slider were added by the creator
 on 27 October. Home search is a dedicated page; signup/login opens Privy directly.
 The Trade screen pairs an inline ticket with an order book and a collapsible

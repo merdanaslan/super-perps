@@ -35,6 +35,7 @@ export function CandleCanvas({
   const series = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const lastTime = useRef<number | undefined>(undefined);
   const firstTime = useRef<number | undefined>(undefined);
+  const previousBars = useRef<typeof bars>([]);
   const visiblePosition = position?.symbol === symbol ? position : undefined;
   const visibleOrders = useMemo(
     () => orders?.filter((order) => order.symbol === symbol) ?? [],
@@ -81,6 +82,7 @@ export function CandleCanvas({
       series.current = null;
       lastTime.current = undefined;
       firstTime.current = undefined;
+      previousBars.current = [];
     };
   }, []);
   useEffect(() => {
@@ -92,8 +94,27 @@ export function CandleCanvas({
       low,
       close,
     }));
-    // Refresh the full exchange window, preserving the user's zoom after initial load.
-    series.current.setData(mapped);
+    const previous = previousBars.current;
+    const sameHistory =
+      previous.length > 0 &&
+      bars.length >= previous.length &&
+      previous.slice(0, -1).every((bar, index) => {
+        const next = bars[index]!;
+        return (
+          bar.time === next.time &&
+          bar.open === next.open &&
+          bar.high === next.high &&
+          bar.low === next.low &&
+          bar.close === next.close
+        );
+      }) &&
+      bars[previous.length - 1]!.time === previous.at(-1)!.time;
+    // Update the open candle in place. A history backfill/correction still replaces
+    // the full window, while neither path resets the user's time zoom.
+    if (sameHistory) {
+      for (const bar of mapped.slice(previous.length - 1)) series.current.update(bar);
+    } else series.current.setData(mapped);
+    previousBars.current = bars;
     const minPrice = Math.min(...bars.map((bar) => bar.low));
     const precision = Math.max(2, Math.min(10, 4 - Math.floor(Math.log10(minPrice))));
     series.current.applyOptions({
@@ -101,6 +122,8 @@ export function CandleCanvas({
     });
     if (
       !lastTime.current ||
+      // The WS may beat the initial history request; frame that first backfill.
+      bars[0]!.time < firstTime.current! ||
       (bars[0]?.time !== firstTime.current && bars.at(-1)!.time < lastTime.current)
     ) {
       chart.current

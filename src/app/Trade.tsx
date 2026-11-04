@@ -106,13 +106,13 @@ export function Trade({
   };
   let maxBase = '0';
   let estimatedMargin: string | undefined;
-  let notional: string | undefined;
+  let sizePreview: ReturnType<typeof previewOrderSize> | undefined;
   try {
     if (account && !trading.stale && reference)
       maxBase = availableOrderSize(account, draft, reference);
     if (market && amount && reference) {
       const size = previewOrderSize(amount, unit, reference, market.baseLotsDecimals);
-      notional = size.notional;
+      sizePreview = size;
       const params = account?.params.paramsBySymbol[symbol];
       if (account?.inputs && params && !trading.stale)
         estimatedMargin = fromLots(
@@ -332,7 +332,7 @@ export function Trade({
                 placeholder="Amount"
                 value={amount}
                 aria-invalid={!!fieldError}
-                aria-describedby="order-error"
+                aria-describedby="order-size-summary order-error"
                 onChange={(e) => {
                   setAmount(normalizeDecimalInput(e.target.value));
                   setAllocation(0);
@@ -358,11 +358,23 @@ export function Trade({
                 ))}
               </div>
             </div>
-            <div className="notional-estimate">
-              <span>Total</span>
+            <div className="notional-estimate" id="order-size-summary">
+              <span>{orderType === 'market' ? 'Est. order value' : 'Order value'}</span>
               <strong>
-                {notional ? usdc(Number(notional)) : '—'} <small>USDC</small>
+                {sizePreview ? usdc(Number(sizePreview.notional)) : '—'} <small>USDC</small>
               </strong>
+              {unit === 'quote' && sizePreview && (
+                <>
+                  <span>
+                    {sizePreview.baseUnits} {symbol}
+                  </span>
+                  {sizePreview.rounded && (
+                    <span className="size-rounding-note">
+                      Rounded down to {sizePreview.lotSize} {symbol} steps.
+                    </span>
+                  )}
+                </>
+              )}
             </div>
             <div className="ticket-options">
               {intent === 'open' && (
@@ -564,7 +576,7 @@ export function Trade({
         open={sheet === 'unit'}
         onClose={() => setSheet(null)}
         title="Order size unit"
-        description="USDC is position value, not deposited collateral."
+        description="USDC is position value, not deposited collateral. The quantity rounds down to the market’s size increment; market fills can vary with price."
       >
         {(['base', 'quote'] as const).map((v) => (
           <button

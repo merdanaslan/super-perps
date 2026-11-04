@@ -13,6 +13,7 @@ interface CandleInput {
   low: number;
   close: number;
   volume: number;
+  tradeCount?: number;
   externalSource?: string;
 }
 
@@ -29,7 +30,9 @@ export function normalizeCandles(bars: CandleInput[]) {
       bar.high < Math.max(bar.open, bar.close, bar.low) ||
       bar.low > Math.min(bar.open, bar.close) ||
       !Number.isFinite(bar.volume) ||
-      bar.volume < 0
+      bar.volume < 0 ||
+      (bar.tradeCount !== undefined &&
+        (!Number.isSafeInteger(bar.tradeCount) || bar.tradeCount < 0))
     ) {
       throw new Error('Invalid Phoenix candle data.');
     }
@@ -38,6 +41,23 @@ export function normalizeCandles(bars: CandleInput[]) {
     byTime.set(time, { ...bar, time });
   }
   return [...byTime.values()].sort((a, b) => a.time - b.time);
+}
+
+/** Merge normalized REST history and cumulative WS bars without losing newer trades. */
+export function mergeCandles(current: CandleInput[], updates: CandleInput[]) {
+  const byTime = new Map(current.map((bar) => [bar.time, bar]));
+  for (const bar of updates) {
+    const previous = byTime.get(bar.time);
+    if (
+      previous?.tradeCount !== undefined &&
+      bar.tradeCount !== undefined &&
+      bar.tradeCount < previous.tradeCount
+    )
+      continue;
+    byTime.set(bar.time, bar);
+  }
+  // REST can omit the open bucket; preserve it while backfilling closed candles.
+  return [...byTime.values()].sort((a, b) => a.time - b.time).slice(-160);
 }
 
 function positive(value: string) {
@@ -67,5 +87,11 @@ export function previewOrderSize(
   if (lots.lt(1)) throw new Error('Amount is below the minimum market lot.');
   if (lots.gt('18446744073709551615')) throw new Error('Size exceeds the protocol lot limit.');
   const base = lots.div(scale);
-  return { baseUnits: base.toFixed(), notional: base.mul(reference).toFixed() };
+  const notional = base.mul(reference);
+  return {
+    baseUnits: base.toFixed(),
+    notional: notional.toFixed(),
+    rounded: unit === 'quote' && notional.lt(input),
+    lotSize: new Exact(1).div(scale).toFixed(),
+  };
 }
