@@ -122,7 +122,7 @@ export function CandleCanvas({
     });
     if (
       !lastTime.current ||
-      // The WS may beat the initial history request; frame that first backfill.
+      // Reframe if a later snapshot backfills previously unavailable history.
       bars[0]!.time < firstTime.current! ||
       (bars[0]?.time !== firstTime.current && bars.at(-1)!.time < lastTime.current)
     ) {

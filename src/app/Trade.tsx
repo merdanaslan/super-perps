@@ -332,7 +332,7 @@ export function Trade({
                 placeholder="Amount"
                 value={amount}
                 aria-invalid={!!fieldError}
-                aria-describedby="order-size-summary order-error"
+                aria-describedby={`${sizePreview ? 'order-size-summary ' : ''}order-error`}
                 onChange={(e) => {
                   setAmount(normalizeDecimalInput(e.target.value));
                   setAllocation(0);
@@ -358,24 +358,13 @@ export function Trade({
                 ))}
               </div>
             </div>
-            <div className="notional-estimate" id="order-size-summary">
-              <span>{orderType === 'market' ? 'Est. order value' : 'Order value'}</span>
-              <strong>
-                {sizePreview ? usdc(Number(sizePreview.notional)) : '—'} <small>USDC</small>
-              </strong>
-              {unit === 'quote' && sizePreview && (
-                <>
-                  <span>
-                    {sizePreview.baseUnits} {symbol}
-                  </span>
-                  {sizePreview.rounded && (
-                    <span className="size-rounding-note">
-                      Rounded down to {sizePreview.lotSize} {symbol} steps.
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
+            {sizePreview && (
+              <p className="order-size-summary" id="order-size-summary">
+                {unit === 'quote' && `${sizePreview.baseUnits} ${symbol} · `}
+                {orderType === 'market' && '≈ '}
+                {usdc(Number(sizePreview.notional))} USDC
+              </p>
+            )}
             <div className="ticket-options">
               {intent === 'open' && (
                 <label className="tpsl-toggle">

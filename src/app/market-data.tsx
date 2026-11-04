@@ -150,15 +150,22 @@ export function useCandles(symbol: string, timeframe: Timeframe) {
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
     const controller = new AbortController();
-    const publish = (bars: ReturnType<typeof normalizeCandles>) => {
-      if (active)
-        setState((previous) => ({
+    let candles: ReturnType<typeof normalizeCandles> = [];
+    let historyReady = false;
+    const publish = (bars: typeof candles, fromHistory = false) => {
+      if (!active) return;
+      candles = mergeCandles(candles, bars);
+      historyReady ||= fromHistory;
+      // Buffer live updates until history arrives so a timeframe change never
+      // fits the chart to a lone live candle before the full window is ready.
+      if (historyReady)
+        setState({
           key,
-          bars: mergeCandles(previous.bars, bars),
+          bars: candles,
           error: '',
           loading: false,
           updatedAt: Date.now(),
-        }));
+        });
     };
     async function read() {
       try {
@@ -167,7 +174,7 @@ export function useCandles(symbol: string, timeframe: Timeframe) {
             .candles()
             .getCandles(symbol, { timeframe, limit: 160, enableExternalSource: false }),
         );
-        publish(bars);
+        publish(bars, true);
       } catch (cause) {
         if (active)
           setState((previous) => ({ ...previous, loading: false, error: errorMessage(cause) }));

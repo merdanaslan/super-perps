@@ -83,7 +83,7 @@ it('updates the open candle in place and appends new candles without resetting z
   expect(mocks.setData).toHaveBeenCalledTimes(2);
   expect(mocks.range).toHaveBeenCalledTimes(1);
 });
-it('frames the initial history when a live candle arrives before the REST snapshot', async () => {
+it('reframes when a later snapshot backfills previously unavailable history', async () => {
   const bar = { time: 1_793_005_200, open: 100, high: 105, low: 98, close: 102, volume: 2 };
   await act(() => root.render(<CandleCanvas symbol="ETH" bars={[bar]} />));
   const history = Array.from({ length: 160 }, (_, index) => ({
