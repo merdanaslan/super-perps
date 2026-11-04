@@ -7,6 +7,7 @@ import { MarketProvider, useCandles, type Timeframe } from './market-data';
 
 const mocks = vi.hoisted(() => ({ read: vi.fn(), stream: vi.fn(), dispose: vi.fn() }));
 vi.mock('../phoenix/client', () => ({
+  PHOENIX_API_URL: 'https://phoenix.example.test',
   createPublicPhoenixClient: () => ({
     api: { candles: () => ({ getCandles: mocks.read }) },
     streams: { candles: mocks.stream },
