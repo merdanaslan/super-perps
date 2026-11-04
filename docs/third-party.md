@@ -10,22 +10,23 @@ files do not replace review of custom terms for a particular use.
 
 Current direct runtime dependencies:
 
-| Package                                                        | Declared license | Purpose                                                           |
-| -------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------- |
-| `@ellipsis-labs/rise` 0.6.2                                    | MIT              | Official Phoenix perpetuals client and instruction builders       |
-| `@solana/kit` 8.5.0                                            | MIT              | Solana types, addresses and codecs                                |
-| `@solana-program/compute-budget` 0.20.0                        | Apache-2.0       | Simulated compute-unit and priority-fee instructions              |
-| `@solana-program/memo` 0.16.0, `system` 0.16.0, `token` 0.18.0 | Apache-2.0       | Required peers for Privy's Solana browser modules                 |
-| `@privy-io/react-auth` 3.51.0                                  | Apache-2.0       | Optional wallet onboarding SDK; hosted service terms are separate |
-| `decimal.js` 10.6.0                                            | MIT              | Exact decimal validation and slippage arithmetic                  |
-| `react`, `react-dom` 19.3.1                                    | MIT              | Browser application                                               |
-| `lightweight-charts` 5.2.1                                     | Apache-2.0       | Candlesticks; Phoenix supplies the OHLC data                      |
-| `@base-ui/react` 1.9.0                                         | MIT              | Accessible dialog primitives for mobile sheets                    |
-| `lucide-react` 1.61.0                                          | ISC              | Interface icons                                                   |
-| `motion` 14.7.1                                                | MIT              | Reduced-motion-aware hero entrance and tab selection indicators   |
-| `qrcode.react` 4.2.0                                           | ISC              | QR handoff on hosted HTTPS origins                                |
-| `jose` 6.2.15                                                  | MIT              | Server-only Privy JWT verification against public JWKS            |
-| `ws` 8.22.1                                                    | MIT              | Server-only authenticated WebSocket relay                         |
+| Package                                                        | Declared license | Purpose                                                                |
+| -------------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------- |
+| `@ellipsis-labs/rise` 0.6.2                                    | MIT              | Official Phoenix perpetuals client and instruction builders            |
+| `@solana/kit` 8.5.0                                            | MIT              | Solana types, addresses and codecs                                     |
+| `@solana-program/compute-budget` 0.20.0                        | Apache-2.0       | Simulated compute-unit and priority-fee instructions                   |
+| `@solana-program/memo` 0.16.0, `system` 0.16.0, `token` 0.18.0 | Apache-2.0       | Required peers for Privy's Solana browser modules                      |
+| `@privy-io/react-auth` 3.51.0                                  | Apache-2.0       | Optional wallet onboarding SDK; hosted service terms are separate      |
+| `decimal.js` 10.6.0                                            | MIT              | Exact decimal validation and slippage arithmetic                       |
+| `react`, `react-dom` 19.3.1                                    | MIT              | Browser application                                                    |
+| `@vercel/analytics` 2.0.1                                      | MIT              | Optional basic page views on Vercel; hosted service terms are separate |
+| `lightweight-charts` 5.2.1                                     | Apache-2.0       | Candlesticks; Phoenix supplies the OHLC data                           |
+| `@base-ui/react` 1.9.0                                         | MIT              | Accessible dialog primitives for mobile sheets                         |
+| `lucide-react` 1.61.0                                          | ISC              | Interface icons                                                        |
+| `motion` 14.7.1                                                | MIT              | Reduced-motion-aware hero entrance and tab selection indicators        |
+| `qrcode.react` 4.2.0                                           | ISC              | QR handoff on hosted HTTPS origins                                     |
+| `jose` 6.2.15                                                  | MIT              | Server-only Privy JWT verification against public JWKS                 |
+| `ws` 8.22.1                                                    | MIT              | Server-only authenticated WebSocket relay                              |
 
 Magic UI’s MIT-licensed Blur Fade is adapted in `src/app/components/BlurFade.tsx`;
 its full notice is retained in `public/third-party-notices.txt`. Original super perps

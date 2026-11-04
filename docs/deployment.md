@@ -39,6 +39,26 @@ host compiles the server files. Local Vite can load the TypeScript sources
 directly, so CI also imports the compiled API entry points to catch deployment-only
 module resolution errors.
 
+### Optional basic analytics
+
+Enable **Web Analytics** in your Vercel project's Analytics dashboard, then set
+`VITE_WEB_ANALYTICS_ENABLED=true` for the intended deployment environment and
+redeploy. The included React integration reports visitors and page views to that
+deployment's own Vercel project. Leave the flag blank on other hosts or to disable
+tracking; the local development server never loads the analytics script.
+
+This starter sends no custom events, wallet addresses, email addresses, balances
+or transaction details. It strips query strings and fragments from page-view URLs
+and excludes the integration lab and unknown paths. Query-based tab and market
+changes are not reported as separate pages. Basic analytics is not a record of
+individual button clicks or trade execution.
+
+Use the dashboard's environment filter to distinguish Preview testing from
+Production visits. Content blockers can prevent collection. See
+[Vercel's setup guide](https://vercel.com/docs/analytics/quickstart),
+[data handling](https://vercel.com/docs/analytics/privacy-policy) and
+[plan limits](https://vercel.com/docs/analytics/limits-and-pricing).
+
 ### GitHub and production updates
 
 Publishing source grants others permission to read and fork it, not write access

@@ -1,5 +1,7 @@
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Analytics } from '@vercel/analytics/react';
+import { analyticsBeforeSend } from './analytics';
 import { StartupScreen } from './components/StartupScreen';
 
 if (import.meta.env.PROD) {
@@ -23,5 +25,8 @@ createRoot(document.getElementById('root')!).render(
     <Suspense fallback={<StartupScreen />}>
       <Screen />
     </Suspense>
+    {import.meta.env.PROD && import.meta.env.VITE_WEB_ANALYTICS_ENABLED === 'true' && (
+      <Analytics beforeSend={analyticsBeforeSend} />
+    )}
   </StrictMode>,
 );
