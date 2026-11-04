@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { crossMarketSupported, normalizeCandles, previewOrderSize } from './presentation';
+import {
+  crossMarketSupported,
+  mergeCandles,
+  normalizeCandles,
+  previewOrderSize,
+} from './presentation';
 
 describe('cross-only market eligibility', () => {
   it('excludes isolated-only and inactive markets', () => {
@@ -25,13 +30,53 @@ describe('Phoenix candle presentation', () => {
     expect(() => normalizeCandles([{ ...bar, high: 99 }])).toThrow('Invalid');
     expect(() => normalizeCandles([{ ...bar, time: NaN }])).toThrow('Invalid');
   });
+  it('merges history with a live candle without rolling back its trades', () => {
+    const live = normalizeCandles([{ ...bar, close: 104, tradeCount: 12 }]);
+    const olderSnapshot = normalizeCandles([
+      { ...bar, time: bar.time - 60_000, tradeCount: 20 },
+      { ...bar, close: 102, tradeCount: 10 },
+    ]);
+    expect(mergeCandles(live, olderSnapshot)).toEqual([olderSnapshot[0], live[0]]);
+    const final = normalizeCandles([{ ...bar, close: 105, tradeCount: 14 }]);
+    expect(mergeCandles(live, final)).toEqual(final);
+  });
+  it('keeps the open bucket when REST only contains closed candles and bounds history', () => {
+    const history = normalizeCandles(
+      Array.from({ length: 160 }, (_, index) => ({ ...bar, time: bar.time + index * 60_000 })),
+    );
+    const live = normalizeCandles([{ ...bar, time: bar.time + 160 * 60_000 }]);
+    const merged = mergeCandles(live, history);
+    expect(merged).toHaveLength(160);
+    expect(merged[0]).toEqual(history[1]);
+    expect(merged.at(-1)).toEqual(live[0]);
+  });
 });
 
 describe('indicative order size', () => {
+  it('explains the BTC budget in whole lots without exceeding the entered value', () => {
+    expect(previewOrderSize('10', 'quote', '78400', 4)).toEqual({
+      baseUnits: '0.0001',
+      notional: '7.84',
+      rounded: true,
+      lotSize: '0.0001',
+    });
+    expect(previewOrderSize('15.68', 'quote', '78400', 4)).toMatchObject({
+      baseUnits: '0.0002',
+      notional: '15.68',
+      rounded: false,
+    });
+    expect(previewOrderSize('0.0001', 'base', '78400', 4)).toMatchObject({
+      baseUnits: '0.0001',
+      notional: '7.84',
+      rounded: false,
+    });
+  });
   it('rounds USDC notional down to whole base lots', () => {
     expect(previewOrderSize('100', 'quote', '33', 2)).toEqual({
       baseUnits: '3.03',
       notional: '99.99',
+      rounded: true,
+      lotSize: '0.01',
     });
   });
   it('requires exact whole lots when the user enters base units', () => {
@@ -41,6 +86,8 @@ describe('indicative order size', () => {
     expect(previewOrderSize('550', 'quote', '2', -1)).toEqual({
       baseUnits: '270',
       notional: '540',
+      rounded: true,
+      lotSize: '10',
     });
   });
   it('rejects zero, exponent notation, invalid prices and underflow', () => {

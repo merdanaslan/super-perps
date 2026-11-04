@@ -257,6 +257,25 @@ it('clears quantity, total and TP/SL only after the submitted ticket confirms', 
     '',
   );
 });
+it('shows the rounded quantity and value that will actually reach review for a USDC input', async () => {
+  await render();
+  await act(() => container.querySelector<HTMLButtonElement>('.unit-selector')!.click());
+  await click('USDC · order value');
+  await fill('#order-amount', '10');
+  const estimate = container.querySelector('.notional-estimate')!;
+  expect(estimate.textContent).toContain('Est. order value');
+  expect(estimate.textContent).toContain('9.32');
+  expect(estimate.textContent).toContain('0.004 ETH');
+  expect(estimate.textContent).toContain('Rounded down to 0.001 ETH steps.');
+  expect(container.querySelector<HTMLInputElement>('#order-amount')!.value).toBe('10');
+  await click('Open Long');
+  expect(mocks.review).toHaveBeenCalledWith(
+    expect.objectContaining({ baseUnits: '0.004' }),
+    expect.any(Function),
+  );
+  await fill('#order-amount', '9.32');
+  expect(estimate.textContent).not.toContain('Rounded down');
+});
 it('does not clear a newer draft when an earlier order confirms', async () => {
   await render();
   await fill('#order-amount', '0.001');

@@ -869,7 +869,8 @@ export class TradingService {
           encoding: 'base64',
           skipPreflight: false,
           preflightCommitment: 'confirmed',
-          maxRetries: 2,
+          // Leave maxRetries unset so the node can rebroadcast until confirmation
+          // or blockhash expiry. A limit of two can drop an otherwise valid action.
         },
       ]);
       if (result !== signed.signature) throw new Error('RPC returned a different transaction ID.');

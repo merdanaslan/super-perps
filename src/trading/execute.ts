@@ -1,5 +1,6 @@
-import { verifyWalletSignature, type Receipt } from './chain';
+import { RpcResponseError, verifyWalletSignature, type Receipt } from './chain';
 import type { ReviewPlan } from './types';
+import { safeDiagnostic } from './feedback';
 
 /** The caller holds an origin-wide Web Lock. Persist BEFORE broadcast, including on network errors. */
 export async function executeReviewed(
@@ -47,7 +48,24 @@ export async function executeReviewed(
   deps.persist(pending); // A write failure stops submission rather than losing recovery information.
   try {
     await deps.broadcast(plan, signed);
-  } catch {
+  } catch (cause) {
+    // This path broadcasts only once. A structured preflight/signature rejection
+    // proves that attempt was not forwarded; timeouts and provider errors do not.
+    // Phoenix onboarding uses a separate co-signing/submission API and stays pending.
+    if (
+      plan.action.kind !== 'setup' &&
+      cause instanceof RpcResponseError &&
+      cause.rejectedBeforeBroadcast
+    ) {
+      return {
+        ...pending,
+        state: 'failed',
+        rejectedBeforeBroadcast: true,
+        detail: safeDiagnostic(
+          `RPC ${cause.code}: ${cause.message}${cause.data?.err ? ` (${JSON.stringify(cause.data.err)})` : ''}`,
+        ),
+      };
+    }
     return {
       ...pending,
       detail:

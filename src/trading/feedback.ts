@@ -70,6 +70,8 @@ export function transactionProblem(cause: unknown): TransactionProblem {
 }
 
 export function receiptMessage(receipt: Receipt): string {
+  if (receipt.state === 'failed' && receipt.rejectedBeforeBroadcast)
+    return 'The RPC rejected this transaction before broadcast. Nothing was submitted and no network fee was charged for this attempt. Check the details, then review the action again.';
   if (receipt.state === 'failed')
     return 'The network rejected this transaction, so its changes were not applied. A network fee may still have been charged. Check the details before reviewing again.';
   if (receipt.state === 'confirmed') {

@@ -26,6 +26,29 @@ import { ensureRpcSession, invalidateRpcSession } from '../wallet/rpc-session';
 
 export const MAINNET_GENESIS = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d';
 export type RpcCall = <T>(method: string, params?: unknown[]) => Promise<T>;
+
+/** Keep structured RPC errors: a known preflight rejection is not a lost response. */
+export class RpcResponseError extends Error {
+  constructor(
+    readonly method: string,
+    readonly code: number | undefined,
+    message: string,
+    readonly data?: { err?: unknown },
+  ) {
+    super(message);
+  }
+
+  get rejectedBeforeBroadcast() {
+    // AlreadyProcessed may mean the signature has landed. Keep checking it.
+    return (
+      this.method === 'sendTransaction' &&
+      [-32002, -32003, -32602].includes(this.code ?? 0) &&
+      this.data?.err !== 'AlreadyProcessed' &&
+      !/already\s?processed/i.test(this.message)
+    );
+  }
+}
+
 export function createRpcCall(url: string): RpcCall {
   let id = 0;
   return async <T>(method: string, params: unknown[] = []): Promise<T> => {
@@ -45,8 +68,12 @@ export function createRpcCall(url: string): RpcCall {
             ? 'The RPC rejected this connection. Check the allowed app origin in the server configuration.'
             : `Solana RPC unavailable (${response.status}). Please retry.`,
       );
-    const body = (await response.json()) as { result?: T; error?: { message: string } };
-    if (body.error) throw new Error(body.error.message);
+    const body = (await response.json()) as {
+      result?: T;
+      error?: { code?: number; message: string; data?: { err?: unknown } };
+    };
+    if (body.error)
+      throw new RpcResponseError(method, body.error.code, body.error.message, body.error.data);
     if (body.result === undefined) throw new Error('Solana RPC returned no result.');
     return body.result;
   };
@@ -282,6 +309,7 @@ export interface Receipt {
   state: 'pending' | 'confirmed' | 'failed' | 'expired';
   slot?: number;
   detail?: string;
+  rejectedBeforeBroadcast?: boolean;
 }
 export async function checkReceipt(rpc: RpcCall, receipt: Receipt): Promise<Receipt> {
   const getStatus = () =>

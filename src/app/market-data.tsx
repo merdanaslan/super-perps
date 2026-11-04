@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { ExchangeMarketSnapshot, PhoenixMarketDataStoreState } from '@ellipsis-labs/rise';
 import { config } from '../config';
 import { createPublicPhoenixClient, type PublicPhoenixClient } from '../phoenix/client';
-import { normalizeCandles } from '../phoenix/presentation';
+import { mergeCandles, normalizeCandles } from '../phoenix/presentation';
 
 export type Market = ExchangeMarketSnapshot;
 type MarketContextValue = {
@@ -149,6 +149,17 @@ export function useCandles(symbol: string, timeframe: Timeframe) {
     if (!client || !visible) return;
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
+    const controller = new AbortController();
+    const publish = (bars: ReturnType<typeof normalizeCandles>) => {
+      if (active)
+        setState((previous) => ({
+          key,
+          bars: mergeCandles(previous.bars, bars),
+          error: '',
+          loading: false,
+          updatedAt: Date.now(),
+        }));
+    };
     async function read() {
       try {
         const bars = normalizeCandles(
@@ -156,7 +167,7 @@ export function useCandles(symbol: string, timeframe: Timeframe) {
             .candles()
             .getCandles(symbol, { timeframe, limit: 160, enableExternalSource: false }),
         );
-        if (active) setState({ key, bars, error: '', loading: false, updatedAt: Date.now() });
+        publish(bars);
       } catch (cause) {
         if (active)
           setState((previous) => ({ ...previous, loading: false, error: errorMessage(cause) }));
@@ -164,9 +175,29 @@ export function useCandles(symbol: string, timeframe: Timeframe) {
         if (active) timer = setTimeout(() => void read(), 15_000);
       }
     }
+    // Phoenix pushes the current bucket before it closes. REST fills history and
+    // reconciles gaps after a reconnect; it is also the fallback if WS is unavailable.
+    // The SDK normalizes both REST and WS timestamps to milliseconds.
+    if (client.streams)
+      void (async () => {
+        try {
+          for await (const update of client.streams!.candles(
+            symbol,
+            timeframe,
+            controller.signal,
+          )) {
+            if (!active) return;
+            if (update.symbol !== symbol || update.timeframe !== timeframe) continue;
+            publish(normalizeCandles([update.candle]));
+          }
+        } catch (cause) {
+          if (active) setState((previous) => ({ ...previous, error: errorMessage(cause) }));
+        }
+      })();
     void read();
     return () => {
       active = false;
+      controller.abort();
       clearTimeout(timer);
     };
   }, [client, key, symbol, timeframe, attempt, visible]);

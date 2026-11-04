@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Stream Phoenix's open candles into Lightweight Charts, with REST history/recovery,
+  protection against older snapshots and in-place updates that preserve chart zoom.
+- Show the executable quantity and market-lot rounding for USDC order entry.
+- Remove the two-retry RPC submission cap and surface explicit preflight
+  rejections immediately, while preserving pending recovery for uncertain sends.
 - Add optional basic Vercel Web Analytics for hosted visits, with URL redaction
   and no custom events. Tracking is disabled by default and in local development.
 - Correct Zod peer resolution in the lockfile without changing package versions,

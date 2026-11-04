@@ -2473,6 +2473,9 @@ a svg {
   font-size: 10px;
   color: var(--muted);
 }
+.size-rounding-note {
+  line-height: 1.45;
+}
 .ticket-options {
   display: flex;
   align-items: center;

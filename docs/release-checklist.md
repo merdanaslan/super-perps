@@ -1,8 +1,34 @@
 # Release readiness — 0.1.0 candidate
 
-Updated 3 November 2026. This is the current release summary; older dated
+Updated 4 November 2026. This is the current release summary; older dated
 verification notes are historical observations. Source preparation and automated
 checks are distinct from publishing a repository or clearing a funded deployment.
+
+## Phone-test follow-up — 4 November 2026
+
+- The maintainer reports successful limit-order, TP/SL and withdrawal tests, but
+  also intermittent transaction expiry. A supplied expired signature returned no
+  historical status or transaction from both the configured provider and the public
+  mainnet RPC. This is consistent with no on-chain inclusion; the original send
+  response is unavailable, so the specific cause of that attempt is unproven.
+- Removed the ordinary send's two-retry cap so the RPC can use its normal
+  rebroadcast policy. Structured preflight/signature rejections now resolve
+  immediately with diagnostic details. Uncertain responses, including
+  `AlreadyProcessed`, still reconcile the original signature. No new transaction
+  is automatically signed and the relay still forwards each request only once.
+- Clarified USDC order-value rounding. At a BTC limit price of 78,400 USD, a
+  10 USDC input becomes one 0.0001 BTC lot worth 7.84 USDC; the ticket now shows
+  the executable quantity and the rounding explanation.
+- Replaced polling-only candles with Phoenix's candle stream plus 15-second REST
+  history/recovery. A read-only live probe received 20 updates to the same BTC
+  one-minute candle in 25 seconds. Chart updates preserve zoom, handle the initial
+  history arriving after the stream, and reject older cumulative trade counts.
+- **497 tests across 48 files**, type/format/repository checks, license verification
+  and the configured production build pass locally. Browser checks verified the
+  BTC sizing example and chart history/timeframe rendering. These checks signed
+  or submitted no financial transaction. Submission reliability needs a fresh
+  phone test of the updated preview; this follow-up does not clear production or
+  supersede the documented dependency findings.
 
 ## GitHub and hosted preview — 3 November 2026
 
