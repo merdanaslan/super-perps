@@ -1,8 +1,26 @@
 # PWA and phone testing
 
-The creator selected an unprotected, temporary Cloudflare tunnel for the first
-phone test. A Vercel deployment, basic authentication and delegated one-click
-trading are not part of this step.
+Use the current hosted preview or the local HTTPS instructions below. The first
+phone tests used a temporary Cloudflare tunnel; current hosted previews use Vercel.
+
+## Testing the latest hosted preview
+
+A Vercel deployment URL with a random identifier points to that particular build.
+A Home Screen app installed from it stays on that hostname: opening a different
+preview URL in Safari does not update the existing installation. For repeated
+phone testing, install from the stable branch preview URL, which follows the latest
+successful deployment of that branch. See [Vercel's generated URLs](https://vercel.com/docs/deployments/generated-urls).
+
+Open the current preview link in Safari first and verify the change. If the
+installation uses an older deployment URL, add the current preview to the Home
+Screen. You do not need to delete the old installation just to test the new URL.
+Keep an old installation with an unresolved transaction until its receipt is
+reconciled: pending receipts are stored per origin and do not follow a new hostname.
+
+On the same hostname, close every app window and browser tab, then reopen to let
+a waiting service-worker update activate. Reinstallation is not normally needed.
+Protected previews may also require a refreshed Vercel share link when access
+expires; that is separate from updating the app.
 
 ## What the build includes
 

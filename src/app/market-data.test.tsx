@@ -90,7 +90,7 @@ afterEach(async () => {
   vi.restoreAllMocks();
   vi.clearAllMocks();
 });
-it('shows within-candle updates immediately, including before a slower history response', async () => {
+it('buffers live candles until history is ready, then updates the open candle immediately', async () => {
   let resolve!: (bars: (typeof bar)[]) => void;
   mocks.read.mockReturnValueOnce(
     new Promise((done) => {
@@ -99,14 +99,48 @@ it('shows within-candle updates immediately, including before a slower history r
   );
   await render();
   await emit({ ...bar, close: 104, tradeCount: 12 });
-  expect(state.bars.at(-1)?.close).toBe(104);
-  expect(state.loading).toBe(false);
+  expect(state.bars).toEqual([]);
+  expect(state.loading).toBe(true);
   await act(() => resolve([{ ...bar, time: bar.time - 60_000 }, bar]));
+  expect(state.loading).toBe(false);
   expect(state.bars).toHaveLength(2);
   expect(state.bars.at(-1)?.close).toBe(104);
   expect(state.bars.at(-1)?.time).toBe(bar.time / 1000);
+  await emit({ ...bar, close: 105, tradeCount: 13 });
+  expect(state.bars.at(-1)?.close).toBe(105);
   await emit({ ...bar, time: bar.time + 60_000 });
   expect(state.bars).toHaveLength(3);
+});
+it('does not flash a single live candle or accept late history when switching timeframes', async () => {
+  await render();
+  let resolve!: (bars: (typeof bar)[]) => void;
+  mocks.read.mockReturnValueOnce(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  await render('BTC', '5m');
+  await emit(bar, 'BTC', '5m');
+  expect(state.bars).toEqual([]);
+  expect(state.loading).toBe(true);
+  await render('BTC', '15m');
+  expect(feeds[1]!.signal.aborted).toBe(true);
+  await act(() => resolve([{ ...bar, close: 105, tradeCount: 100 }]));
+  expect(state.key).toBe('BTC:15m');
+  expect(state.bars.at(-1)?.close).toBe(102);
+});
+it('keeps the initial history error visible until a successful retry, even with live updates', async () => {
+  mocks.read.mockRejectedValueOnce(new Error('History unavailable'));
+  await render();
+  await emit({ ...bar, close: 104, tradeCount: 12 });
+  expect(state.bars).toEqual([]);
+  expect(state.loading).toBe(false);
+  expect(state.error).toBe('History unavailable');
+  mocks.read.mockResolvedValue([{ ...bar, time: bar.time - 60_000 }, bar]);
+  await act(() => vi.advanceTimersByTimeAsync(15_000));
+  expect(state.error).toBe('');
+  expect(state.bars).toHaveLength(2);
+  expect(state.bars.at(-1)?.close).toBe(104);
 });
 it('aborts the previous feed on timeframe or market changes and ignores mismatched updates', async () => {
   await render();
