@@ -5,8 +5,8 @@
 - Stream Phoenix's open candles into Lightweight Charts, with REST history/recovery,
   protection against older snapshots and in-place updates that preserve chart zoom.
 - Buffer live candles until timeframe history is ready to prevent a single-candle flash.
-- Show the executable quantity and value in a compact conversion line below the
-  size slider, with market-lot rounding explained in the unit selector.
+- Remove the redundant order-value summary below the size slider; keep exact
+  quantity in the confirmation review and explain lot rounding in the unit selector.
 - Remove the two-retry RPC submission cap and surface explicit preflight
   rejections immediately, while preserving pending recovery for uncertain sends.
 - Add optional basic Vercel Web Analytics for hosted visits, with URL redaction

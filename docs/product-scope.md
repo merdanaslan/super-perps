@@ -22,8 +22,8 @@ Every unavailable or unverified capability must be identified as such.
 
 Market and limit orders, cancellation, and reduce-only closing are in scope.
 USDC order entry converts position value to whole base lots, rounded down at the
-entered limit price or current market quote. A compact ticket line shows the resulting
-quantity and value; the unit selector explains rounding. For example, with a 0.0001 BTC lot at
+entered limit price or current market quote. The confirmation review shows the
+resulting quantity; the unit selector explains rounding. For example, with a 0.0001 BTC lot at
 78,400 USD, a 10 USDC input sizes 0.0001 BTC worth 7.84 USDC; the next lot would
 exceed the input. This is position value, not margin or fees. Market execution
 prices can move within the reviewed slippage bound.

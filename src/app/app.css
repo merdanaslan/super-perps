@@ -2453,14 +2453,6 @@ a svg {
   width: 1px;
   background: #454a52;
 }
-.order-size-summary {
-  margin: 0;
-  font-size: 11px;
-  color: var(--muted-bright);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
 .ticket-options {
   display: flex;
   align-items: center;

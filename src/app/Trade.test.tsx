@@ -232,7 +232,7 @@ it('normalizes decimal commas in order size, limit price and TP/SL before review
     expect.any(Function),
   );
 });
-it('clears quantity, total and TP/SL only after the submitted ticket confirms', async () => {
+it('clears quantity and TP/SL only after the submitted ticket confirms', async () => {
   await render();
   await fill('#order-amount', '0.001');
   await act(() => container.querySelector<HTMLInputElement>('.tpsl-toggle input')!.click());
@@ -244,10 +244,8 @@ it('clears quantity, total and TP/SL only after the submitted ticket confirms', 
     expect.any(Function),
   );
   expect(container.querySelector<HTMLInputElement>('#order-amount')!.value).toBe('0.001');
-  expect(container.querySelector('#order-size-summary')?.textContent).toBe('≈ 2.33 USDC');
   await act(() => mocks.review.mock.calls[0]![1]());
   expect(container.querySelector<HTMLInputElement>('#order-amount')!.value).toBe('');
-  expect(container.querySelector('#order-size-summary')).toBeNull();
   expect(container.querySelector<HTMLInputElement>('.tpsl-toggle input')!.checked).toBe(false);
   await act(() => container.querySelector<HTMLInputElement>('.tpsl-toggle input')!.click());
   expect(container.querySelector<HTMLInputElement>('[aria-label="Take profit price"]')!.value).toBe(
@@ -257,21 +255,17 @@ it('clears quantity, total and TP/SL only after the submitted ticket confirms', 
     '',
   );
 });
-it('shows the rounded quantity and value that will actually reach review for a USDC input', async () => {
+it('passes the rounded executable quantity to review for a USDC input', async () => {
   await render();
   await act(() => container.querySelector<HTMLButtonElement>('.unit-selector')!.click());
   await click('USDC · order value');
   await fill('#order-amount', '10');
-  const estimate = container.querySelector('#order-size-summary')!;
-  expect(estimate.textContent).toBe('0.004 ETH · ≈ 9.32 USDC');
   expect(container.querySelector<HTMLInputElement>('#order-amount')!.value).toBe('10');
   await click('Open Long');
   expect(mocks.review).toHaveBeenCalledWith(
     expect.objectContaining({ baseUnits: '0.004' }),
     expect.any(Function),
   );
-  await fill('#order-amount', '0.01');
-  expect(container.querySelector('#order-size-summary')).toBeNull();
 });
 it('does not clear a newer draft when an earlier order confirms', async () => {
   await render();

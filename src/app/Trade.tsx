@@ -106,13 +106,11 @@ export function Trade({
   };
   let maxBase = '0';
   let estimatedMargin: string | undefined;
-  let sizePreview: ReturnType<typeof previewOrderSize> | undefined;
   try {
     if (account && !trading.stale && reference)
       maxBase = availableOrderSize(account, draft, reference);
     if (market && amount && reference) {
       const size = previewOrderSize(amount, unit, reference, market.baseLotsDecimals);
-      sizePreview = size;
       const params = account?.params.paramsBySymbol[symbol];
       if (account?.inputs && params && !trading.stale)
         estimatedMargin = fromLots(
@@ -332,7 +330,7 @@ export function Trade({
                 placeholder="Amount"
                 value={amount}
                 aria-invalid={!!fieldError}
-                aria-describedby={`${sizePreview ? 'order-size-summary ' : ''}order-error`}
+                aria-describedby="order-error"
                 onChange={(e) => {
                   setAmount(normalizeDecimalInput(e.target.value));
                   setAllocation(0);
@@ -358,13 +356,6 @@ export function Trade({
                 ))}
               </div>
             </div>
-            {sizePreview && (
-              <p className="order-size-summary" id="order-size-summary">
-                {unit === 'quote' && `${sizePreview.baseUnits} ${symbol} · `}
-                {orderType === 'market' && '≈ '}
-                {usdc(Number(sizePreview.notional))} USDC
-              </p>
-            )}
             <div className="ticket-options">
               {intent === 'open' && (
                 <label className="tpsl-toggle">
